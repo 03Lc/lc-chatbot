@@ -2,35 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LC Chatbot</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-    .chatbot-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1000;
-    }
+    body { font-family: Arial, sans-serif; }
+    .chatbot-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+    
+    /* Chatbot toggle button */
     .chat-toggle-btn {
-      padding: 10px 15px;
-      background: white;
-      border: 1px solid #ccc;
+      padding: 15px 25px;
+      background: #007bff;
+      color: white;
+      border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
+      font-size: 18px;
+      justify-content: center;
+      flex-direction: column;
     }
-    .chat-toggle-btn:hover {
-      background: #f3f3f3;
+    .chat-toggle-btn:hover { background: #0056b3; }
+    .chat-toggle-btn span {
+      font-size: 14px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      font-weight: bold;
     }
+
+    /* Chat window styling */
     .chat-window {
       width: 350px;
       max-height: 500px;
@@ -42,6 +43,18 @@
       flex-direction: column;
       overflow: hidden;
     }
+
+    /* Top section of chat window */
+    .chat-header {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Chat warning */
     .chat-warning {
       background: #ffe0e0;
       color: #660000;
@@ -50,6 +63,8 @@
       font-size: 14px;
       border-bottom: 1px solid #ccc;
     }
+
+    /* Messages area */
     .chat-messages {
       flex: 1;
       overflow-y: auto;
@@ -58,22 +73,16 @@
       display: flex;
       flex-direction: column;
     }
-    .chat-message {
-      margin: 5px 0;
-      padding: 8px 12px;
-      border-radius: 10px;
-      max-width: 80%;
+    .chat-message { 
+      margin: 5px 0; 
+      padding: 8px 12px; 
+      border-radius: 10px; 
+      max-width: 80%; 
     }
-    .user {
-      background: #007bff;
-      color: white;
-      align-self: flex-end;
-    }
-    .bot {
-      background: #eaeaea;
-      align-self: flex-start;
-      white-space: pre-wrap;
-    }
+    .user { background: #007bff; color: white; align-self: flex-end; }
+    .bot { background: #eaeaea; align-self: flex-start; white-space: pre-wrap; }
+
+    /* Input area */
     .chat-input-area {
       display: flex;
       padding: 10px;
@@ -94,6 +103,8 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    /* Predefined questions */
     .chat-options {
       display: flex;
       flex-wrap: wrap;
@@ -114,6 +125,8 @@
       background: #007bff;
       color: white;
     }
+
+    /* Reset chat button */
     .chat-reset-btn {
       text-align: center;
       padding-bottom: 10px;
@@ -130,10 +143,15 @@
   </style>
 </head>
 <body>
-
   <div class="chatbot-container">
-    <button class="chat-toggle-btn" onclick="toggleChat()">💬 LC - How may I help you?</button>
+    <!-- Chat toggle button -->
+    <button class="chat-toggle-btn" onclick="toggleChat()">
+      <span> </span> 💬
+    </button>
+
+    <!-- Chat window -->
     <div class="chat-window" id="chatWindow">
+      <div class="chat-header">LC'S AI</div>
       <div class="chat-warning">⚠️ This conversation is part of a testing phase... Nothing is saved... But someone is watching. Proceed only if you dare. Do you understand?</div>
       <div class="chat-messages" id="chatMessages">
         <div class="chat-message bot">👋 Hello there... Before we begin, what should I call you?</div>
@@ -176,10 +194,11 @@
       const toggleBtn = document.querySelector('.chat-toggle-btn');
       if (win.style.display === 'flex') {
         win.style.display = 'none';
-        toggleBtn.textContent = '💬 LC - How may I help you?';
+        toggleBtn.textContent = 'LC';
       } else {
         win.style.display = 'flex';
-        toggleBtn.textContent = '❌ Close Chat';
+        toggleBtn.textContent = '❌';
+        scrollToBottom();
       }
     }
 
@@ -210,9 +229,8 @@
       const msgDiv = document.createElement('div');
       msgDiv.className = `chat-message ${sender}`;
       msgDiv.textContent = text;
-      const chatMessages = document.getElementById('chatMessages');
-      chatMessages.appendChild(msgDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      document.getElementById('chatMessages').appendChild(msgDiv);
+      scrollToBottom();
     }
 
     function addBotMessageWithTyping(text, callback = null) {
@@ -225,13 +243,18 @@
       const typingInterval = setInterval(() => {
         if (i < text.length) {
           msgDiv.textContent += text.charAt(i);
-          chatMessages.scrollTop = chatMessages.scrollHeight;
           i++;
+          scrollToBottom();
         } else {
           clearInterval(typingInterval);
           if (callback) callback();
         }
       }, 25);
+    }
+
+    function scrollToBottom() {
+      const messages = document.getElementById('chatMessages');
+      messages.scrollTop = messages.scrollHeight;
     }
 
     function renderOptions() {
@@ -250,31 +273,30 @@
       document.getElementById("chatOptions").innerHTML = "";
       document.getElementById("chatInput").placeholder = "Enter your name...";
       userName = "";
+      scrollToBottom();
     }
 
-    // Handle Enter key press
-    document.getElementById('chatInput').addEventListener("keydown", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
+    // ✅ Enter key support
+    document.getElementById("chatInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
         sendMessage();
       }
     });
 
-    // 🔐 Block Right-Click & Dev Tools
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    document.addEventListener('keydown', event => {
-      if (
-        event.key === "F12" ||
-        (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) ||
-        (event.ctrlKey && (event.key === 'U' || event.key === 'S'))
-      ) {
-        event.preventDefault();
-        return false;
-      }
-    });
 
-    // Prevent Text Selection
-    document.addEventListener('selectstart', event => event.preventDefault());
+
+   
+
+    // Disable right-click
+  document.addEventListener('contextmenu', function (event) {
+    event.preventDefault();
+  });
+
+
+
+
+
+
   </script>
 </body>
 </html>
