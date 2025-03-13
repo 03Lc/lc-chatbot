@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LC Chatbot</title>
   <style>
     body { font-family: Arial, sans-serif; }
@@ -43,10 +42,12 @@
       overflow-y: auto;
       padding: 10px;
       height: 220px;
+      display: flex;
+      flex-direction: column;
     }
     .chat-message { margin: 5px 0; padding: 8px 12px; border-radius: 10px; max-width: 80%; }
     .user { background: #007bff; color: white; align-self: flex-end; }
-    .bot { background: #eaeaea; align-self: flex-start; }
+    .bot { background: #eaeaea; align-self: flex-start; white-space: pre-wrap; }
     .chat-input-area {
       display: flex;
       padding: 10px;
@@ -104,7 +105,7 @@
 </head>
 <body>
   <div class="chatbot-container">
-    <button class="chat-toggle-btn" onclick="toggleChat()">💬 AI - How may I help you?</button>
+    <button class="chat-toggle-btn" onclick="toggleChat()">💬 LC - How may I help you?</button>
     <div class="chat-window" id="chatWindow">
       <div class="chat-warning">⚠️ This conversation is part of a testing phase... Nothing is saved... But someone is watching. Proceed only if you dare. Do you understand?</div>
       <div class="chat-messages" id="chatMessages">
@@ -145,7 +146,15 @@
 
     function toggleChat() {
       const win = document.getElementById('chatWindow');
-      win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+      const toggleBtn = document.querySelector('.chat-toggle-btn');
+      if (win.style.display === 'flex') {
+        win.style.display = 'none';
+        toggleBtn.textContent = '💬 LC - How may I help you?';
+      } else {
+        win.style.display = 'flex';
+        toggleBtn.textContent = '❌ Close Chat';
+        scrollToBottom();
+      }
     }
 
     function sendMessage(message = null) {
@@ -159,15 +168,16 @@
         if (!userName) {
           userName = msg;
           text = `😊 Nice to meet you, ${userName}! How can I assist you today?`;
-          addMessage("bot", text);
-          addMessage("bot", "Here are some things you can ask me:");
-          renderOptions();
-          document.getElementById("chatInput").placeholder = "Type your message...";
+          addBotMessageWithTyping(text, () => {
+            addBotMessageWithTyping("Here are some things you can ask me:");
+            renderOptions();
+            document.getElementById("chatInput").placeholder = "Type your message...";
+          });
         } else {
           text = responses[msg.toLowerCase()] || "🤔 Sorry, I don't understand that....ëřrøř";
-          addMessage("bot", text);
+          addBotMessageWithTyping(text);
         }
-      }, 1000);
+      }, 600);
     }
 
     function addMessage(sender, text) {
@@ -175,7 +185,31 @@
       msgDiv.className = `chat-message ${sender}`;
       msgDiv.textContent = text;
       document.getElementById('chatMessages').appendChild(msgDiv);
-      msgDiv.scrollIntoView({ behavior: "smooth" });
+      scrollToBottom();
+    }
+
+    function addBotMessageWithTyping(text, callback = null) {
+      const chatMessages = document.getElementById('chatMessages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'chat-message bot';
+      chatMessages.appendChild(msgDiv);
+
+      let i = 0;
+      const typingInterval = setInterval(() => {
+        if (i < text.length) {
+          msgDiv.textContent += text.charAt(i);
+          i++;
+          scrollToBottom();
+        } else {
+          clearInterval(typingInterval);
+          if (callback) callback();
+        }
+      }, 25);
+    }
+
+    function scrollToBottom() {
+      const messages = document.getElementById('chatMessages');
+      messages.scrollTop = messages.scrollHeight;
     }
 
     function renderOptions() {
@@ -194,7 +228,15 @@
       document.getElementById("chatOptions").innerHTML = "";
       document.getElementById("chatInput").placeholder = "Enter your name...";
       userName = "";
+      scrollToBottom();
     }
+
+    // ✅ Enter key support
+    document.getElementById("chatInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
   </script>
 </body>
 </html>
