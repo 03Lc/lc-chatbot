@@ -5,159 +5,187 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LC Chatbot</title>
   <style>
-    body { font-family: Arial, sans-serif; }
-    .chatbot-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
-    
-    /* Chatbot toggle button */
-    .chat-toggle-btn {
-      padding: 15px 25px;
-      background: #007bff;
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(145deg, #0e0e0e, #1a1a1a);
       color: white;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center;
-      font-size: 18px;
-      justify-content: center;
-      flex-direction: column;
-    }
-    .chat-toggle-btn:hover { background: #0056b3; }
-    .chat-toggle-btn span {
-      font-size: 14px;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      font-weight: bold;
     }
 
-    /* Chat window styling */
+    .chatbot-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .chat-toggle-btn {
+      background: linear-gradient(135deg, #6366f1, #9333ea);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s ease;
+    }
+
+    .chat-toggle-btn:hover {
+      transform: scale(1.1);
+    }
+
     .chat-window {
       width: 350px;
       max-height: 500px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      background: #1f1f1f;
+      border-radius: 20px;
+      overflow: hidden;
       display: none;
       flex-direction: column;
-      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
     }
 
-    /* Top section of chat window */
     .chat-header {
-      background: #007bff;
-      color: white;
+      background: #27272a;
+      padding: 15px;
       text-align: center;
-      padding: 12px;
-      font-size: 18px;
       font-weight: bold;
+      font-size: 18px;
+      border-bottom: 1px solid #333;
     }
 
-    /* Chat warning */
     .chat-warning {
-      background: #ffe0e0;
-      color: #660000;
-      padding: 8px 12px;
+      background: #333;
+      color: #f87171;
+      font-size: 13px;
+      padding: 10px;
       text-align: center;
-      font-size: 14px;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #444;
     }
 
-    /* Messages area */
     .chat-messages {
       flex: 1;
       overflow-y: auto;
       padding: 10px;
-      height: 220px;
       display: flex;
       flex-direction: column;
     }
-    .chat-message { 
-      margin: 5px 0; 
-      padding: 8px 12px; 
-      border-radius: 10px; 
-      max-width: 80%; 
-    }
-    .user { background: #007bff; color: white; align-self: flex-end; }
-    .bot { background: #eaeaea; align-self: flex-start; white-space: pre-wrap; }
 
-    /* Input area */
+    .chat-message {
+      margin: 6px 0;
+      padding: 12px 16px;
+      border-radius: 18px;
+      max-width: 80%;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: #6366f1;
+      align-self: flex-end;
+      color: white;
+    }
+
+    .bot {
+      background: #3f3f46;
+      align-self: flex-start;
+      color: white;
+      white-space: pre-wrap;
+    }
+
     .chat-input-area {
       display: flex;
       padding: 10px;
-      border-top: 1px solid #ccc;
+      background: #1a1a1a;
+      border-top: 1px solid #333;
     }
+
     .chat-input-area input {
       flex: 1;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .chat-input-area button {
-      margin-left: 5px;
-      padding: 8px 12px;
+      padding: 10px;
       border: none;
-      background: #007bff;
+      border-radius: 10px;
+      background: #2d2d2d;
       color: white;
-      border-radius: 5px;
+    }
+
+    .chat-input-area button {
+      margin-left: 8px;
+      background: #6366f1;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
       cursor: pointer;
     }
 
-    /* Predefined questions */
     .chat-options {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      padding: 10px;
+      gap: 8px;
       justify-content: center;
-      margin: 10px;
-    }
-    .chat-options button {
-      font-size: 12px;
-      padding: 5px 10px;
-      border: 1px solid #007bff;
-      background: white;
-      color: #007bff;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .chat-options button:hover {
-      background: #007bff;
-      color: white;
+      background: #1a1a1a;
     }
 
-    /* Reset chat button */
-    .chat-reset-btn {
-      text-align: center;
-      padding-bottom: 10px;
-    }
-    .chat-reset-btn button {
-      padding: 5px 12px;
+    .chat-options button {
+      background: transparent;
+      border: 1px solid #6366f1;
+      color: #ddd;
+      padding: 6px 12px;
       font-size: 12px;
-      border: none;
-      background: red;
-      color: white;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
+    }
+
+    .chat-reset-btn {
+      padding: 10px;
+      text-align: center;
+      background: #1a1a1a;
+    }
+
+    .chat-reset-btn button {
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .glitch {
+      position: relative;
+      color: #fff;
+      animation: glitch 1s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-1px, 1px); }
+      40% { transform: translate(-1px, -1px); }
+      60% { transform: translate(1px, 1px); }
+      80% { transform: translate(1px, -1px); }
+      100% { transform: translate(0); }
     }
   </style>
 </head>
 <body>
   <div class="chatbot-container">
-    <!-- Chat toggle button -->
-    <button class="chat-toggle-btn" onclick="toggleChat()">
-      <span> </span> 💬
-    </button>
-
-    <!-- Chat window -->
+    <button class="chat-toggle-btn" onclick="toggleChat()">💬</button>
     <div class="chat-window" id="chatWindow">
       <div class="chat-header">LC'S AI</div>
-      <div class="chat-warning">⚠️ This conversation is part of a testing phase... Nothing is saved... But someone is watching. Proceed only if you dare. Do you understand?</div>
+      <div class="chat-warning">⚠️ This conversation is part of a testing phase... Nothing is saved... </div>
       <div class="chat-messages" id="chatMessages">
-        <div class="chat-message bot">👋 Hello there... Before we begin, what should I call you?</div>
+        <div class="chat-message bot glitch">👋 Hello there... Before we begin, what should I call you?</div>
       </div>
       <div class="chat-input-area">
-        <input type="text" id="chatInput" placeholder="Enter your name..." />
+        <input type="text" id="chatInput" placeholder="Enter your name...">
         <button onclick="sendMessage()">Send</button>
       </div>
       <div class="chat-options" id="chatOptions"></div>
@@ -166,7 +194,6 @@
       </div>
     </div>
   </div>
-
   <script>
     let userName = "";
     const responses = {
@@ -191,13 +218,13 @@
 
     function toggleChat() {
       const win = document.getElementById('chatWindow');
-      const toggleBtn = document.querySelector('.chat-toggle-btn');
+      const btn = document.querySelector('.chat-toggle-btn');
       if (win.style.display === 'flex') {
         win.style.display = 'none';
-        toggleBtn.textContent = '💬';
+        btn.innerHTML = '💬';
       } else {
         win.style.display = 'flex';
-        toggleBtn.textContent = '❌';
+        btn.innerHTML = '❌';
         scrollToBottom();
       }
     }
@@ -208,6 +235,7 @@
       if (!msg) return;
       addMessage("user", msg);
       input.value = "";
+
       setTimeout(() => {
         let text = "";
         if (!userName) {
@@ -216,10 +244,10 @@
           addBotMessageWithTyping(text, () => {
             addBotMessageWithTyping("Here are some things you can ask me:");
             renderOptions();
-            document.getElementById("chatInput").placeholder = "Type your message...";
+            input.placeholder = "Type your message...";
           });
         } else {
-          text = responses[msg.toLowerCase()] || "🤔 Sorry,Your request has been swallowed. Gone...It’s gone";
+          text = responses[msg.toLowerCase()] || "🤔 Sorry, your request has been swallowed. Gone...It’s gone";
           addBotMessageWithTyping(text);
         }
       }, 600);
@@ -234,27 +262,22 @@
     }
 
     function addBotMessageWithTyping(text, callback = null) {
-      const chatMessages = document.getElementById('chatMessages');
+      const container = document.getElementById('chatMessages');
       const msgDiv = document.createElement('div');
       msgDiv.className = 'chat-message bot';
-      chatMessages.appendChild(msgDiv);
+      container.appendChild(msgDiv);
 
       let i = 0;
-      const typingInterval = setInterval(() => {
+      const interval = setInterval(() => {
         if (i < text.length) {
           msgDiv.textContent += text.charAt(i);
           i++;
           scrollToBottom();
         } else {
-          clearInterval(typingInterval);
+          clearInterval(interval);
           if (callback) callback();
         }
       }, 25);
-    }
-
-    function scrollToBottom() {
-      const messages = document.getElementById('chatMessages');
-      messages.scrollTop = messages.scrollHeight;
     }
 
     function renderOptions() {
@@ -269,34 +292,27 @@
     }
 
     function resetChat() {
-      document.getElementById("chatMessages").innerHTML = '<div class="chat-message bot">👋 Hello there... Before we begin, what should I call you?</div>';
+      document.getElementById("chatMessages").innerHTML = '<div class="chat-message bot glitch">👋 Hello there... Before we begin, what should I call you?</div>';
       document.getElementById("chatOptions").innerHTML = "";
       document.getElementById("chatInput").placeholder = "Enter your name...";
       userName = "";
       scrollToBottom();
     }
 
-    // ✅ Enter key support
+    function scrollToBottom() {
+      const chatMessages = document.getElementById('chatMessages');
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
     document.getElementById("chatInput").addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         sendMessage();
       }
     });
 
-
-
-   
-
-    // Disable right-click
-  document.addEventListener('contextmenu', function (event) {
-    event.preventDefault();
-  });
-
-
-
-
-
-
+    document.addEventListener('contextmenu', function (event) {
+      event.preventDefault();
+    });
   </script>
 </body>
 </html>
